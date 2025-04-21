@@ -1,7 +1,7 @@
 !function(global){
-if (typeof global !== 'object' || !global.CDNDB || !global.CDNDB.add)
-    throw Error('CDNDB is not defined or CDNDB.add() is missing');
-global.CDNDB.add({
+if (typeof global !== 'object' || !global.CDNDB || !global.CDNDB.addDb)
+    throw Error('CDNDB is not defined or CDNDB.addDb() is missing');
+global.CDNDB.addDb({
     dateCreated: ['2023-10-01 00:00:00', 'Jo Doe'],
     dateUpdated: ['2023-10-01 00:00:00', 'Jo Doe'],
     identifier: 'unencrypted-data-example',

@@ -7,7 +7,7 @@ const cdndb = {};
 
 // Create the global namespace. Available as `window.CDNDB` in the browser.
 global.CDNDB = {
-    // A list of subscribers to the "cdndb-add" event.
+    // A list of subscribers to the "cdndb-addDb" event.
     onAdd: [],
 
     // A list of subscribers to the "cdndb-remove" event.
@@ -18,8 +18,8 @@ global.CDNDB = {
 };
 
 // Lets a .cdndb.js file register its metadata and tables as soon as it loads.
-global.CDNDB.add = function () {
-    const pfx = 'CDNDB.add(): ';
+global.CDNDB.addDb = function () {
+    const pfx = 'CDNDB.addDb(): ';
     const len = arguments.length;
     if (len < 2)
         throw Error(`${pfx}Got ${len} argument${len == 1 ? '' : 's'} (less than 2)`);
@@ -48,7 +48,7 @@ global.CDNDB.add = function () {
 
     // Notify subscribers that the database has been added.
     if (global.CDNDB.onAdd.length > 0) {
-        const event = new CustomEvent('cdndb-add', { detail: { dbIdentifier } });
+        const event = new CustomEvent('cdndb-addDb', { detail: { dbIdentifier } });
         global.CDNDB.onAdd.forEach((sub) => sub(event));
     }
 }
