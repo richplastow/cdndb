@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>cdndb</title>
+    <script src="./cdndb.js"></script>
 </head>
 <body>
 
@@ -18,6 +19,16 @@
 <li>Demo: <a href="https://richplastow.com/cdndb/">https://richplastow.com/cdndb/</a></li>
 </ul>
 <hr>
+
+<pre id="output">Loading...</pre>
+
+<script>{
+    const $output = document.querySelector('#output');
+    $output.innerHTML = 'Loading the unencrypted data example...';
+    const $example01 = document.createElement('script');
+    $example01.src = './01-unencrypted-data-example.cdndb.js';
+    document.body.appendChild($example01);
+}</script>
 
 </body>
 </html>
