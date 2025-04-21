@@ -4,9 +4,31 @@
  * npm test
  */
 
-import { deepEqual as eq } from "node:assert";
+import { deepEqual as eq, throws } from "node:assert";
+import { readFileSync } from "node:fs";
 
-// eq(1, 2, "1 is not equal to 2");
-eq(1, 1, "1 is equal to 1");
+const example01 = readFileSync(
+    new URL('./docs/01-unencrypted-data-example.js', import.meta.url),
+    'utf8',
+);
+
+throws(
+    () => eval(example01), {
+        name: 'Error',
+        message: 'CDNDB is not defined or CDNDB.add() is missing',
+    }, "Didn't define CDNDB.add() yet."
+);
+
+// Mock the CDNDB.add() function.
+let addCalledWith = null;
+global.CDNDB = {
+    add: function () {
+        addCalledWith = arguments;
+    }
+};
+
+eval(example01);
+eq(addCalledWith.length, 3, "CDNDB.add() was called with 3 arguments");
+
 
 console.log('\n\u2705 All tests passed\n');
