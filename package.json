@@ -1,0 +1,20 @@
+{
+  "name": "cdndb",
+  "version": "0.0.1",
+  "description": "An in-browser JavaScript database which uses any CDN (e.g. S3 or GitHub Pages) for persistence",
+  "author": "Rich Plastow",
+  "private": true,
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "node test.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/richplastow/cdndb.git"
+  },
+  "bugs": {
+    "url": "https://github.com/richplastow/cdndb/issues"
+  },
+  "homepage": "https://github.com/richplastow/cdndb#readme"
+}
