@@ -4,7 +4,7 @@ if (typeof global !== 'object' || !global.CDNDB || !global.CDNDB.add)
 global.CDNDB.add({
     dateCreated: ['2023-10-01 00:00:00', 'Jo Doe'],
     dateUpdated: ['2023-10-01 00:00:00', 'Jo Doe'],
-    identifier: '01_unencrypted_data_example',
+    identifier: 'unencrypted-data-example',
     kind: 'Metadata',
     notes: ['An example cdndb database containing two JS tables, neither protected by encryption.'],
     tags: ['unencrypted', 'example'],
@@ -12,11 +12,11 @@ global.CDNDB.add({
     versionCdndb: '0.0.1',
     versionData: '1.0.0',
 },{
-    identifier: 'userProfiles',
+    identifier: 'user-profiles',
     kind: 'UnencryptedJs',
     payload: {
         columns: [
-            { identifier: 'userId', kind: 'BigInt' },
+            { identifier: 'user-id', kind: 'Integer' },
             { identifier: 'name', kind: 'String' },
             { identifier: 'theme', kind: 'Enum', valid: ['blue', 'red'] },
         ],
@@ -28,20 +28,20 @@ global.CDNDB.add({
     },
     tags: ['example', 'user', 'profile'],
 },{
-    identifier: 'chatMessages',
+    identifier: 'chat-messages',
     kind: 'UnencryptedJs',
     payload: {
         columns: [
-            { identifier: 'messageId', kind: 'BigInt' },
+            { identifier: 'message-id', kind: 'Integer' },
             { identifier: 'content', kind: 'String' },
-            { identifier: 'sender', kind: 'Enum', valid: ['Alice', 'Bob', 'Charlie'] },
+            { identifier: 'sender-id', kind: 'Integer' },
         ],
         rows: [
-            [1, 'Hello everyone!', 'Alice'],
-            [2, 'Hi Alice, how are you?', 'Bob'],
-            [3, 'Welcome to the chat!', 'Charlie'],
-            [4, "I'm doing great, thanks!", 'Alice'],
-            [5, 'What are we discussing today?', 'Bob'],
+            [1, 'Hello everyone!', 1], // Alice
+            [2, 'Hi Alice, how are you?', 2], // Bob
+            [3, 'Welcome to the chat!', 3], // Charlie
+            [4, "I'm doing great, thanks!", 1], // Alice
+            [5, 'What are we discussing today?', 2], // Bob
         ],
     },
     tags: ['example', 'chat', 'messages'],

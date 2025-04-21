@@ -34,14 +34,187 @@ throws(
     }, "Didn't throw error for missing arguments."
 );
 throws(
-    () => global.CDNDB.add({}, {}), {
-        message: 'CDNDB.add(): First argument is not a Metadata object',
-    }, "Didn't throw error for missing metadata."
+    () => global.CDNDB.add({}, 1), {
+        message: 'CDNDB.add(): validateMetadata(): validateIdentifier(): identifier is type "undefined" not "string"',
+    }, "Didn't throw error for missing Metadata identifier."
 );
 throws(
-    () => global.CDNDB.add({ kind: 'Metadata' }, 1), {
-        message: 'CDNDB.add(): arguments[1] is not an object',
-    }, "Didn't throw error for number instead of object."
+    () => global.CDNDB.add({ identifier: 'a' }, 1), {
+        message: 'CDNDB.add(): validateMetadata(): validateIdentifier(): identifier "a" fails /^([a-z][-a-z0-9]{1,30}[a-z0-9])$/',
+    }, "Didn't throw error for too-short Metadata identifier."
+);
+throws(
+    () => global.CDNDB.add({ identifier: 'a--b' }, 1), {
+        message: 'CDNDB.add(): validateMetadata(): validateIdentifier(): identifier "a--b" contains double-dashes',
+    }, "Didn't throw error for Metadata identifier that contains double-dashes."
+);
+throws(
+    () => global.CDNDB.add({ identifier: 'abc' }, 1), {
+        message: 'CDNDB.add(): validateMetadata(): validateKind(): kind is type "undefined" not "string"',
+    }, "Didn't throw error for missing metadata kind."
+);
+throws(
+    () => global.CDNDB.add({ identifier: 'a-b', kind: 'UnencryptedJs' }, 1), {
+        message: 'CDNDB.add(): validateMetadata(): kind is not "Metadata"',
+    }, "Didn't throw error for incorrect metadata kind."
+);
+throws(
+    () => global.CDNDB.add({ identifier: 'a'.repeat(32), kind: 'Metadata', versionCdndb: [] }, 1), {
+        message: 'CDNDB.add(): validateMetadata(): validateVersionCdndb(): versionCdndb is type "object" not "string"',
+    }, "Didn't throw error for wrong Metadata versionCdndb type."
+);
+throws(
+    () => global.CDNDB.add({ identifier: 'a-b', kind: 'Metadata', versionCdndb: '0.0.0' }, 1), {
+        message: 'CDNDB.add(): validateMetadata(): validateVersionCdndb(): versionCdndb "0.0.0" is not "0.0.1"',
+    }, "Didn't throw error for invalid versionCdndb."
+);
+const minimalValidMetadata = { identifier: 'a-b', kind: 'Metadata', versionCdndb: '0.0.1' };
+throws(
+    () => global.CDNDB.add(minimalValidMetadata, 1), {
+        message: 'CDNDB.add(): item[1]: validateTable(): not an object',
+    }, "Didn't throw error for table item that isn't an object."
+);
+throws(
+    () => global.CDNDB.add(minimalValidMetadata, { identifier: 'a-b-' }), {
+        message: 'CDNDB.add(): item[1]: validateTable(): validateIdentifier(): identifier "a-b-" fails /^([a-z][-a-z0-9]{1,30}[a-z0-9])$/',
+    }, "Didn't throw error for table item with identifier which ends with a dash."
+);
+throws(
+    () => global.CDNDB.add(minimalValidMetadata, { identifier: 'abc', kind: 123 }), {
+        message: 'CDNDB.add(): item[1]: validateTable(): validateKind(): kind is type "number" not "string"',
+    }, "Didn't throw error for incorrect type of table kind."
+);
+throws(
+    () => global.CDNDB.add(minimalValidMetadata, { identifier: 'abc', kind: 'Integer' }), {
+        message: 'CDNDB.add(): item[1]: validateTable(): validateKind(): kind "Integer" is not one of "Metadata" | "UnencryptedJs"',
+    }, "Didn't throw error for incorrect table kind."
+);
+throws(
+    () => global.CDNDB.add(minimalValidMetadata, { identifier: 'abc', kind: 'Metadata' }), {
+        message: 'CDNDB.add(): item[1]: validateTable(): kind is "Metadata"',
+    }, "Didn't throw error for incorrect table kind."
+);
+throws(
+    () => global.CDNDB.add(minimalValidMetadata, { identifier: 'abc', kind: 'UnencryptedJs' }), {
+        message: 'CDNDB.add(): item[1]: validateTable(): validatePayload(): payload is type "undefined" not a plain object',
+    }, "Didn't throw error for missing table payload."
+);
+throws(
+    () => global.CDNDB.add(minimalValidMetadata, { identifier: 'abc', kind: 'UnencryptedJs', payload: 123 }), {
+        message: 'CDNDB.add(): item[1]: validateTable(): validatePayload(): payload is type "number" not a plain object',
+    }, "Didn't throw error for incorrect type of table payload."
+);
+throws(
+    () => global.CDNDB.add(minimalValidMetadata, { identifier: 'abc', kind: 'UnencryptedJs', payload: {} }), {
+        message: 'CDNDB.add(): item[1]: validateTable(): validatePayload(): payload.columns is not an array',
+    }, "Didn't throw error for missing table payload columns."
+);
+throws(
+    () => global.CDNDB.add(minimalValidMetadata, { identifier: 'abc', kind: 'UnencryptedJs', payload: { columns: 123 } }), {
+        message: 'CDNDB.add(): item[1]: validateTable(): validatePayload(): payload.columns is not an array',
+    }, "Didn't throw error for incorrect type of table payload columns array."
+);
+throws(
+    () => global.CDNDB.add(minimalValidMetadata, { identifier: 'abc', kind: 'UnencryptedJs', payload: { columns: [null] } }), {
+        message: 'CDNDB.add(): item[1]: validateTable(): validatePayload(): payload.columns[0] is type "object" not a plain object',
+    }, "Didn't throw error for incorrect type of table payload column item."
+);
+throws(
+    () => global.CDNDB.add(minimalValidMetadata, { identifier: 'abc', kind: 'UnencryptedJs', payload: { columns: [] } }), {
+        message: 'CDNDB.add(): item[1]: validateTable(): validatePayload(): payload.columns is empty',
+    }, "Didn't throw error for incorrect type of table payload column item."
+);
+throws(
+    () => global.CDNDB.add(minimalValidMetadata, { identifier: 'abc', kind: 'UnencryptedJs', payload: {
+        columns: [{ identifier: true }],
+    } }), {
+        message: 'CDNDB.add(): item[1]: validateTable(): validatePayload(): payload.columns[0]: ' +
+            'validateIdentifier(): identifier is type "boolean" not "string"',
+    }, "Didn't throw error for incorrect type of table payload column identifier."
+);
+throws(
+    () => global.CDNDB.add(minimalValidMetadata, { identifier: 'abc', kind: 'UnencryptedJs', payload: {
+        columns: [
+            { identifier: 'foo', kind: 'String' },
+            { identifier: 'bar', kind: 'Integer' },
+            { identifier: 'foo', kind: 'Integer' },
+        ],
+    } }), {
+        message: 'CDNDB.add(): item[1]: validateTable(): validatePayload(): ' +
+            'payload.columns[2] dupe identifier "foo"',
+    }, "Didn't throw error for incorrect type of table payload column identifier."
+);
+throws(
+    () => global.CDNDB.add(minimalValidMetadata, { identifier: 'abc', kind: 'UnencryptedJs', payload: {
+        columns: [{ identifier: 'a-b-c', kind: 'BigInt' }],
+    } }), {
+        message: 'CDNDB.add(): item[1]: validateTable(): validatePayload(): payload.columns[0]: ' +
+            'validateKind(): kind "BigInt" is not one of "Enum" | "Integer" | "String"',
+    }, "Didn't throw error for unrecognised column kind."
+);
+throws(
+    () => global.CDNDB.add(minimalValidMetadata, { identifier: 'abc', kind: 'UnencryptedJs', payload: {
+        columns: [{ identifier: 'a-b-c', kind: 'Enum', valid: 123 }],
+    } }), {
+        message: 'CDNDB.add(): item[1]: validateTable(): validatePayload(): ' +
+            'payload.columns[0].valid is not an array',
+    }, "Didn't throw error for incorrect type of an Enum column's `valid` property."
+);
+throws(
+    () => global.CDNDB.add(minimalValidMetadata, { identifier: 'abc', kind: 'UnencryptedJs', payload: {
+        columns: [{ identifier: 'a-b-c', kind: 'Enum', valid: ['a', 123] }],
+    } }), {
+        message: 'CDNDB.add(): item[1]: validateTable(): validatePayload(): ' +
+            'payload.columns[0].valid[1] is type "number" not "string"',
+    }, "Didn't throw error for incorrect type of an item in an Enum column's `valid` array."
+);
+throws(
+    () => global.CDNDB.add(minimalValidMetadata, { identifier: 'abc', kind: 'UnencryptedJs', payload: {
+        columns: [{ identifier: 'a-b-c', kind: 'String' }],
+        rows: 123,
+    } }), {
+        message: 'CDNDB.add(): item[1]: validateTable(): validatePayload(): payload.rows is not an array',
+    }, "Didn't throw error for incorrect type of table payload rows property."
+);
+throws(
+    () => global.CDNDB.add(minimalValidMetadata, { identifier: 'abc', kind: 'UnencryptedJs', payload: {
+        columns: [{ identifier: 'a-b-c', kind: 'String' }],
+        rows: [['a','b']],
+    } }), {
+        message: 'CDNDB.add(): item[1]: validateTable(): validatePayload(): payload.rows[0] has 2 columns, expected 1',
+    }, "Didn't throw error for incorrect number of columns in a table payload row."
+);
+throws(
+    () => global.CDNDB.add(minimalValidMetadata, { identifier: 'abc', kind: 'UnencryptedJs', payload: {
+        columns: [{ identifier: 'a-b-c', kind: 'Enum', valid: ['a', 'b'] }],
+        rows: [['c']],
+    } }), {
+        message: 'CDNDB.add(): item[1]: validateTable(): validatePayload(): payload.rows[0][0] "c" is not a valid Enum value',
+    }, "Didn't throw error for incorrect Enum value in a table payload row cell."
+);
+throws(
+    () => global.CDNDB.add(minimalValidMetadata, { identifier: 'abc', kind: 'UnencryptedJs', payload: {
+        columns: [{ identifier: 'a-b-c', kind: 'Integer' }],
+        rows: [['a']],
+    } }), {
+        message: 'CDNDB.add(): item[1]: validateTable(): validatePayload(): payload.rows[0][0] is type "string" not "number"',
+    }, "Didn't throw error for incorrect type of a table payload row cell (is string not number)."
+);
+throws(
+    () => global.CDNDB.add(minimalValidMetadata, { identifier: 'abc', kind: 'UnencryptedJs', payload: {
+        columns: [{ identifier: 'a-b-c', kind: 'Integer' }],
+        rows: [[1.23]],
+    } }), {
+        message: 'CDNDB.add(): item[1]: validateTable(): validatePayload(): payload.rows[0][0] "1.23" is not an integer',
+    }, "Didn't throw error for incorrect type of a table payload row cell (is string not number)."
+);
+throws(
+    () => global.CDNDB.add(minimalValidMetadata, { identifier: 'abc', kind: 'UnencryptedJs', payload: {
+        columns: [{ identifier: 'a-b-c', kind: 'String' }],
+        rows: [[123]],
+    } }), {
+        message: 'CDNDB.add(): item[1]: validateTable(): validatePayload(): payload.rows[0][0] is type "number" not "string"',
+    }, "Didn't throw error for incorrect type of a table payload row cell (is number not string)."
 );
 
 

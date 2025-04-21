@@ -25,6 +25,14 @@
 <script>{
     const $output = document.querySelector('#output');
     $output.innerHTML = 'Loading the unencrypted data example...';
+
+    // Subscribe to cdndb events.
+    window.CDNDB.onAdd.push(({ detail }) => {
+        console.log(detail);
+        $output.innerHTML = 'The ' + detail.dbIdentifier + ' database loaded.<br>\n';
+    });
+
+    // Load the unencrypted data example.
     const $example01 = document.createElement('script');
     $example01.src = './01-unencrypted-data-example.cdndb.js';
     document.body.appendChild($example01);
