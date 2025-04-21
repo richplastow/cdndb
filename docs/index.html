@@ -27,8 +27,7 @@
     $output.innerHTML = 'Loading the unencrypted data example...';
 
     // Subscribe to cdndb events.
-    window.CDNDB.onAdd.push(({ detail }) => {
-        console.log(detail);
+    window.CDNDB.onAddDb(({ detail }) => {
         $output.innerHTML = 'The ' + detail.dbIdentifier + ' database loaded.<br>\n';
     });
 

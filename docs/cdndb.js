@@ -2,20 +2,12 @@
 if (typeof global.CDNDB === 'object')
     throw Error('CDNDB has already been defined');
 
-// Create a private object to hold the metadata and tables.
-const cdndb = {};
+// Create private objects an arrays.
+const cdndb = {}; // the metadata and tables
+const addDbSubs = []; // a list of subscribers to the "cdndb-addDb" event
 
 // Create the global namespace. Available as `window.CDNDB` in the browser.
-global.CDNDB = {
-    // A list of subscribers to the "cdndb-addDb" event.
-    onAdd: [],
-
-    // A list of subscribers to the "cdndb-remove" event.
-    onRemove: [],
-
-    // A list of subscribers to the "cdndb-update" event.
-    onUpdate: [],
-};
+global.CDNDB = {};
 
 // Lets a .cdndb.js file register its metadata and tables as soon as it loads.
 global.CDNDB.addDb = function () {
@@ -25,7 +17,6 @@ global.CDNDB.addDb = function () {
         throw Error(`${pfx}Got ${len} argument${len == 1 ? '' : 's'} (less than 2)`);
 
     validateMetadata(arguments[0], pfx);
-    // TODO more Metadata validation
 
     const tableIdentifiers = new Set();
     for (let i = 1; i < len; i++) {
@@ -47,10 +38,18 @@ global.CDNDB.addDb = function () {
     };
 
     // Notify subscribers that the database has been added.
-    if (global.CDNDB.onAdd.length > 0) {
+    if (addDbSubs.length > 0) {
         const event = new CustomEvent('cdndb-addDb', { detail: { dbIdentifier } });
-        global.CDNDB.onAdd.forEach((sub) => sub(event));
+        addDbSubs.forEach((sub) => sub(event));
     }
+}
+
+// Registers a subscription to the "cdndb-addDb" event.
+global.CDNDB.onAddDb = function (sub) {
+    const pfx = 'CDNDB.onAddDb(): ';
+    if (typeof sub !== 'function')
+        throw Error(`${pfx}sub is type "${typeof sub}" not "function"`);
+    addDbSubs.push(sub);
 }
 
 }(this || global);
